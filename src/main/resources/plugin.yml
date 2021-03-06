@@ -1,0 +1,5 @@
+name: EventDebugger
+version: ${project.version}
+main: dev.benergy10.eventdebugger.EventDebugger
+api-version: 1.13
+authors: [ benwoo1110 ]
