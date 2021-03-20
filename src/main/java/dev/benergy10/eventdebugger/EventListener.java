@@ -29,20 +29,24 @@ public class EventListener {
         return (Class<? extends Event>) eventClass;
     }
 
-    private final Plugin plugin;
     private final Class<? extends Event> eventClass;
     private final EventPriority priority;
     private final int coolDown;
+    private final boolean ignoreCancelled;
 
     private Listener listener;
     private EventExecutor executor;
     private HandlerList handlerList;
 
-    public EventListener(Plugin plugin, Class<? extends Event> eventClass, EventPriority priority, int coolDown) {
-        this.plugin = plugin;
+    public EventListener(Class<? extends Event> eventClass) {
+        this(eventClass, EventPriority.NORMAL, 0, false);
+    }
+
+    public EventListener(Class<? extends Event> eventClass, EventPriority priority, int coolDown, boolean ignoreCancelled) {
         this.eventClass = eventClass;
         this.priority = priority;
         this.coolDown = coolDown;
+        this.ignoreCancelled = ignoreCancelled;
     }
 
     private EventExecutor createExecutor() {
@@ -51,7 +55,7 @@ public class EventListener {
         };
     }
 
-    public boolean register() {
+    public boolean register(Plugin plugin) {
         this.listener = new Listener() { };
         this.executor = createExecutor();
         Method handlerListMethod = ReflectHelper.getMethod(eventClass, "getHandlerList");
@@ -64,7 +68,7 @@ public class EventListener {
             Logging.severe("%s is not a valid event. Event's HandleList is null.");
             return false;
         }
-        Bukkit.getPluginManager().registerEvent(eventClass, listener, EventPriority.NORMAL, executor, this.plugin);
+        Bukkit.getPluginManager().registerEvent(eventClass, listener, EventPriority.NORMAL, executor, plugin, ignoreCancelled);
         return true;
     }
 
@@ -76,15 +80,15 @@ public class EventListener {
         return eventClass;
     }
 
-    public Listener getListener() {
-        return listener;
+    public EventPriority getPriority() {
+        return priority;
     }
 
-    public EventExecutor getExecutor() {
-        return executor;
+    public int getCoolDown() {
+        return coolDown;
     }
 
-    public HandlerList getHandlerList() {
-        return handlerList;
+    public boolean isIgnoreCancelled() {
+        return ignoreCancelled;
     }
 }
