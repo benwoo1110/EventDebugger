@@ -21,6 +21,18 @@ public class EventOptions {
         return OPTIONS;
     }
 
+    public static String[] getHeader() {
+        return new String[] {
+                " ___             _   ___      _                           ",
+                "| __|_ _____ _ _| |_|   \\ ___| |__ _  _ __ _ __ _ ___ _ _ ",
+                "| _|\\ V / -_) ' \\  _| |) / -_) '_ \\ || / _` / _` / -_) '_|",
+                "|___|\\_/\\___|_||_\\__|___/\\___|_.__/\\_,_\\__, \\__, \\___|_|",
+                "                                       |___/|___/         ",
+                "",
+                ""
+        };
+    }
+
     public static final ConfigOption<List<EventListener>> LISTENERS = new ConfigOption.Builder<List<EventListener>>()
             .path("events")
             .comment("Stuff")

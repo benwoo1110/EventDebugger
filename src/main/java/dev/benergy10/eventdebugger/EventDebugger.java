@@ -11,7 +11,7 @@ public final class EventDebugger extends MinecraftPlugin {
         this.commandManager.usePerIssuerLocale(true, true);
         this.commandManager.registerCommand(new ReloadCommand());
 
-        YamlFile config = new CommentedYamlFile(this.getConfigFile(), EventOptions.getOptions());
+        YamlFile config = new CommentedYamlFile(this.getConfigFile(), EventOptions.getOptions(), EventOptions.getHeader());
 
         config.getValue(EventOptions.LISTENERS).forEach(event -> event.register(this));
     }
