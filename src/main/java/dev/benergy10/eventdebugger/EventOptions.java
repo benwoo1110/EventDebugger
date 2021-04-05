@@ -39,7 +39,7 @@ public class EventOptions {
             .defaultValue(new ArrayList<EventListener>() {{
                 add(new EventListener(EventListener.getClass("org.bukkit.event.player.PlayerJoinEvent")));
             }})
-            .handler(new ConfigOptionHandler<List<EventListener>>() {
+            .handler(new ConfigOptionHandler<List<EventListener>, Object>() {
                 @Override
                 public Object serialize(List<EventListener> eventListeners) {
                     List<Map<String, Object>> eventDataList = new ArrayList<>();
