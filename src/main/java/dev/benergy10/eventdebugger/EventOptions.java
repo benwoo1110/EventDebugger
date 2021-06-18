@@ -33,40 +33,42 @@ public class EventOptions {
         };
     }
 
-    public static final ConfigOption<List<EventListener>> LISTENERS = new ConfigOption.Builder<List<EventListener>>()
+    public static final ConfigOption<List<EventModel>> LISTENERS = new ConfigOption.Builder<List<EventModel>>()
             .path("events")
-            .comment("Stuff")
-            .defaultValue(new ArrayList<EventListener>() {{
-                add(new EventListener(EventListener.getClass("org.bukkit.event.player.PlayerJoinEvent")));
+            .comment("Put all the events you want to log here")
+            .defaultValue(new ArrayList<EventModel>() {{
+                EventModel event = new EventModel();
+                event.eventClass = ConvertUtils.getEventClass("org.bukkit.event.player.PlayerJoinEvent");
+                add(event);
             }})
-            .handler(new ConfigOptionHandler<List<EventListener>, Object>() {
+            .handler(new ConfigOptionHandler<List<EventModel>, Object>() {
                 @Override
-                public Object serialize(List<EventListener> eventListeners) {
+                public Object serialize(List<EventModel> eventListeners) {
                     List<Map<String, Object>> eventDataList = new ArrayList<>();
-                    for (EventListener event : eventListeners) {
+                    for (EventModel event : eventListeners) {
                         Map<String, Object> eventData = new LinkedHashMap<>();
-                        eventData.put("classPath", event.getEventClass().getName());
-                        eventData.put("priority", event.getPriority().name());
-                        eventData.put("cooldown", event.getCoolDown());
-                        eventData.put("ignoreCancelled", event.isIgnoreCancelled());
+                        eventData.put("classPath", event.eventClass.getName());
+                        eventData.put("priority", event.priority.name());
+                        eventData.put("cooldown", event.coolDown);
+                        eventData.put("ignoreCancelled", event.ignoreCancelled);
                         eventDataList.add(eventData);
                     }
                     return eventDataList;
                 }
 
                 @Override
-                public List<EventListener> deserialize(Object obj) {
+                public List<EventModel> deserialize(Object obj) {
                     List<Map<String, Object>> eventDataList = (List<Map<String, Object>>) obj;
-                    List<EventListener> eventListeners = new ArrayList<>();
+                    List<EventModel> eventModelList = new ArrayList<>();
                     for (Map<String, Object> eventData : eventDataList) {
-                        eventListeners.add(new EventListener(
-                                EventListener.getClass(String.valueOf(eventData.get("classPath"))),
-                                EventPriority.valueOf(String.valueOf(eventData.get("priority")).toUpperCase()),
-                                (int) eventData.get("cooldown"),
-                                (boolean) eventData.get("ignoreCancelled")
-                        ));
+                        EventModel event = new EventModel();
+                        event.eventClass = ConvertUtils.getEventClass(String.valueOf(eventData.get("classPath")));
+                        event.priority = EventPriority.valueOf(String.valueOf(eventData.get("priority")).toUpperCase());
+                        event.coolDown = (int) eventData.get("cooldown");
+                        event.ignoreCancelled = (boolean) eventData.get("ignoreCancelled");
+                        eventModelList.add(event);
                     }
-                    return eventListeners;
+                    return eventModelList;
                 }
             })
             .register(EventOptions::register);
